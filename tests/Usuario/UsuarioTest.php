@@ -14,14 +14,12 @@ class UsuarioTest extends TestCase
      */
     public function testShouldAccessHomePage()
     {
-        //TODO: dontSee(): nome do usuário na dashboard
         $this->get('/')
             ->see('Login')
             ->dontSee("Bem-vindo");
     }
 
     /**
-     * FIXME:
      * Se eu preenchar um telefone em branco no login,
      * preciso ser devolvido è home (/).
      * Aqui, a senha não importa, pois, neste teste, o telefoneUsuario em branco vale para ambos.
@@ -38,12 +36,15 @@ class UsuarioTest extends TestCase
         # chamando a rota para autenticação [/autenticar]
         $response = $this->post('/autenticar', $dadosUsuario);
 
-        # TODO: redirecionar para a home (/) em caso de erro
-
+        # redirecionar para a home (/) em caso de erro
+        $response->assertRedirectedTo('/');
+        $response->followRedirects();
+        # agora estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo");
     }
 
     /**
-     * FIXME:
      * Se eu preencher uma senha em branco,
      * também preciso ser devolvido à home (/).
      *
@@ -60,19 +61,22 @@ class UsuarioTest extends TestCase
         # chamando a rota para autenticação [/autenticar]
         $response = $this->post('/autenticar', $dadosUsuario);
 
-        # TODO: redirecionar para a home (/) em caso de erro
-
+        # redirecionar para a home (/) em caso de erro
+        $response->assertRedirectedTo('/')
+            ->followRedirects();
+        # agora estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo");
     }
 
     /**
-     * FIXME:
      * Se eu preencher um telefone inválido (telefone não existe na base de dados),
      * também preciso ser devolvido para a home (/), com erros [Msg: "Este usuário não existe!"].
      * Aqui neste teste, a senha também não importa, pois o usuário inválido também vale para ambos.
      *
      * Neste caso, espera-se um erro.
      */
-    public function testShouldFailOnPhoneInvalid()
+    public function testShouldFailOnPhoneInvalid_UserExists()
     {
         # garantir a criação de uusário no banco de dados
         #   (pode não haver usuários no sistema ainda)
@@ -94,13 +98,49 @@ class UsuarioTest extends TestCase
         # autenticação de usuário
         $response = $this->post('/autenticar', $dadosUsuario);
 
-        # TODO: redirecionar para a home (/), dando erros na session
+        # redirecionar para a home (/), dando erros na session
+        $response->assertRedirectedTo('/')
+            ->followRedirects()
+            ->assertSessionHas('Erro', "Este usuário não existe!");
+        # agora estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo");
 
     }
-    // TODO: outra variação DO TESTE: apenas criar a pessoa com Pessoa::make(), sem peristi-la no banco de dados
 
     /**
-     * FIXME:
+     * O mesmo teste acima, mas sem persistência de registro no banco de dados
+     */
+    public function testShouldFailOnPhoneInvalid_UserNotExists()
+    {
+        # garantindo usuário na base de dados
+        $usuario = (object) [
+            'nomeUsuario' => str_random(40),
+            'emailUsuario' => str_random(20),
+            'telefoneUsuario' => str_random(8),
+            'remember_token' => str_random(16),
+            'password' => bcrypt(str_random(16)),
+            'statusUsuario' => 1,
+        ];
+        # o usuário ainda não existe
+        $dadosUsuario = [
+            'telefoneUsuario' => $usuario->telefoneUsuario,
+            'password' => $usuario->password,
+        ];
+
+        # autenticação de usuário
+        $response = $this->post('/autenticar', $dadosUsuario);
+
+        # redirecionar para a home (/), dando erros na session
+        $response->assertRedirectedTo('/')
+            ->followRedirects()
+            ->assertSessionHas('Erro', "Este usuário não existe!");
+        # agora estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo");
+    }
+
+    /**
      * O telefone (login de usuário) pode até existir, mas se a senha não conferir,
      *  barrar a autenticação de usuário, redirecionando-o à home (/) dando erros.
      */
@@ -125,12 +165,17 @@ class UsuarioTest extends TestCase
         # autenticacao de usuário
         $response = $this->post('/autenticar', $dadosUsuario);
 
-        # TODO: redirecionar para a home (/), dando erros na session
+        # redirecionar para a home (/), dando erros na session
+        $response->assertRedirectedTo('/')
+            ->followRedirects()
+            ->assertSessionHas('Erro', "A senha não confere!");
+        # agora estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo");
 
     }
 
     /**
-     * TODO:
      * O teste deve falhar se o usuário for inativo no sistema.
      *
      * Neste caso, espera-se um erro.
@@ -155,12 +200,16 @@ class UsuarioTest extends TestCase
         # autenticação do usuário
         $response = $this->post('/autenticar', $dadosUsuario);
 
-        # TODO: garantir que usuário inativo também não logue
-
+        # garantir que usuário inativo também não logue
+        $response->assertRedirectedTo('/')
+            ->followRedirects()
+            ->assertSessionHas('Erro', "Usuário inativo não pode se autenticar!");
+        # agor estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo");
     }
 
     /**
-     * TODO:
      * Usuário válido, ativo que digitou a senha correta deve logar no sistena.
      *
      * Neste caso, espera-se um acerto.
@@ -184,22 +233,48 @@ class UsuarioTest extends TestCase
         ];
 
         # autenticação do usuário
-        $response = $this->post('/atualizar', $dadosUsuario);
+        $response = $this->post('/autenticar', $dadosUsuario);
 
-        # TODO: garantir que o usuário ativo com as credenciais corretas logue no sistema
-
+        # garantir que o usuário ativo com as credenciais corretas logue no sistema
+        $response->assertRedirectedTo('/dashboard')
+            ->followRedirects()
+            ->assertSessionHas('Usuario');
+        # agora estou na dashboard (/dashboard)
+        $this->see("Bem-vindo {$usuario->nomeUsuario}")
+            ->dontSee('Login');
+        #echo print_r($response->response->getContent(), true);
     }
 
 
     /**
-     * TODO:
      * Usuário registrado vai sair da sessão.
      * 
      * Neste caso, espera-se um acerto.
      */
     public function testShouldSuccedOnLogout()
     {
-        
+        # garantindo que o usuário exista (ele já será ativo)
+        #   (afinal, não se pode confiar no banco de dados)
+        $usuario = \Segundo\Models\Pessoa::create([
+            'nomeUsuario' => str_random(20),
+            'emailUsuario' => str_random(28),
+            'telefoneUsuario' => str_random(10),
+            'password' => bcrypt(str_random(36)),
+            'statusUsuario' => 1,
+        ]);
+
+        # considerando que o usuário já esteja autenticado...
+        $response = $this->withSession(['Usuario' => $usuario])
+            ->visit('/dashboard');
+        # ...quero que ele saia da sessão (consumir a rota /sair)
+        $response->get('/sair')
+            ->assertRedirectedTo('/')
+            ->followRedirects()
+            ->assertSessionHas('Sucesso', "Usuário saiu da sessão com sucesso!");
+        # agora estou na home (/)
+        $this->see('Login')
+            ->dontSee("Bem-vindo {$usuario->nomeUsuario}");
+
     }
 
 

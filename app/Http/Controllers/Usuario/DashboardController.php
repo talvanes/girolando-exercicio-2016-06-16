@@ -16,7 +16,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $usuario = $request->session()->get('Usuario');
+        $usuario = session('Usuario');
 
         return "Bem-vindo {$usuario->nomeUsuario}";
     }

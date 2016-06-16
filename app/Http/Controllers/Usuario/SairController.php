@@ -16,6 +16,13 @@ class SairController extends Controller
      */
     public function index(Request $request)
     {
+        # Verificando se o usuário ainda está autenticado
+        //assert(session()->has('Usuario'));
+        if (session()->has('Usuario')) {
+            # se sim, destruir a sessão ativa e redirecionar para a home (/), com sucesso
+            session()->forget('Usuario');
+            return redirect()->route('index')->with('Sucesso', "Usuário saiu da sessão com sucesso!");
+        }
 
     }
 }

@@ -24,8 +24,7 @@ class AutenticarController extends Controller
         # se não foi preeenchido o login (telefoneUsuario) nem a senha (password),
         #   redirecionar à home (/)!
         if ( !isset($credenciaisUsuario['telefoneUsuario']) || !isset($credenciaisUsuario['password']) ){
-            return redirect()->route('index')
-                ->with('Erro', "Usuário ou senha em branco");
+            return redirect()->route('index');
             //return back();
         }
         
@@ -55,7 +54,7 @@ class AutenticarController extends Controller
         }
 
 
-        # TODO: OK, já que tudo deu certo, redirecionar à dashboard (/dashboard), criando uma sessão de usuário
+        # OK, já que tudo deu certo, redirecionar à dashboard (/dashboard), criando uma sessão de usuário
         return redirect()->route('dashboard.index')
             ->with('Usuario', $usuario);
     }
