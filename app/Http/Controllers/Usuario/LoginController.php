@@ -14,8 +14,7 @@ class LoginController extends Controller
      */
     public function index()
     {
-        // TODO: substituir por uma view
-        #return "Login";
+        // Exibir a tela de login na home (/)
         return view('usuario.login');
     }
 }

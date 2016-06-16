@@ -18,11 +18,10 @@ class SairController extends Controller
     {
         # Verificando se o usuário ainda está autenticado
         //assert(session()->has('Usuario'));
-        if (session()->has('Usuario')) {
-            # se sim, destruir a sessão ativa e redirecionar para a home (/), com sucesso
-            session()->forget('Usuario');
-            return redirect()->route('index')->with('Sucesso', trans('usuario.autenticar.sucesso.sairSessao'));
-        }
+        # se sim, destruir a sessão ativa e redirecionar para a home (/), com sucesso
+        session()->forget('Usuario');
+        return redirect()->route('index')
+            ->with('Sucesso', trans('usuario.autenticar.sucesso.sairSessao'));
 
     }
 }

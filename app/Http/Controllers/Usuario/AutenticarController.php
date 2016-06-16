@@ -4,6 +4,7 @@ namespace Segundo\Http\Controllers\Usuario;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Segundo\Http\Requests;
 use Segundo\Http\Controllers\Controller;
@@ -19,25 +20,30 @@ class AutenticarController extends Controller
     public function store(Request $request)
     {
         # credenciais de usuário
-        $credenciaisUsuario = $request->all();
+        $credenciais = $request->all();
+        //return bcrypt($credenciais['password']);
+        # tratando as entradas (senha é informada plana no formulário, mas é armazenada criptigrafada no banco de dados)
+        $credenciais['password'] = hash('whirlpool', $credenciais['password']);
+
         
         # se não foi preeenchido o login (telefoneUsuario) nem a senha (password),
         #   redirecionar à home (/)!
-        if ( empty($credenciaisUsuario['telefoneUsuario']) || empty($credenciaisUsuario['password']) ){
+        if ( empty($credenciais['telefoneUsuario']) || empty($credenciais['password']) ){
             return redirect()->route('index')
                 ->with('Erro', trans('usuario.autenticar.erro.informeDados'));
         }
         
         # se usuário não existir no banco de dados,
         #   redirecionar à home (/), com erro na session
-        $usuario = Pessoa::where('telefoneUsuario', '=', $credenciaisUsuario['telefoneUsuario'])->first();
+        $usuario = Pessoa::where('telefoneUsuario', '=', $credenciais['telefoneUsuario'])
+            ->first();
         if ( !$usuario ) {
             return redirect()->route('index')
                 ->with('Erro', trans('usuario.autenticar.erro.usuarioNaoExiste'));
         }
         # conferir a senha: se for diferente do cadastro,
         #   redirecionar à home (/) com erro na session
-        if ( $credenciaisUsuario['password'] != $usuario->password ) {
+        if ( $credenciais['password'] != $usuario->password ) {
             return redirect()->route('index')
                 ->with('Erro', trans('usuario.autenticar.erro.senhaNaoConfere'));
         }

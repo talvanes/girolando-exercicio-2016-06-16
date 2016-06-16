@@ -12,6 +12,9 @@ class Pessoa extends Model
     /** @var string  */
     protected $table = 'Usuario';
 
+    /** @var string  */
+    protected $primaryKey = 'idUsuario';
+
     /** @var array  */
     protected $fillable = [
         'nomeUsuario',
