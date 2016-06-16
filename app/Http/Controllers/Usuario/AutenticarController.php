@@ -24,7 +24,8 @@ class AutenticarController extends Controller
         # se não foi preeenchido o login (telefoneUsuario) nem a senha (password),
         #   redirecionar à home (/)!
         if ( !isset($credenciaisUsuario['telefoneUsuario']) || !isset($credenciaisUsuario['password']) ){
-            return redirect()->route('index');
+            return redirect()->route('index')
+                ->with('Erro', "Informe telefone e senha!");
             //return back();
         }
         

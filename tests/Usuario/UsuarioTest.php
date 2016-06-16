@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UsuarioTest extends TestCase
 {
-    use WithoutMiddleware;
+    use WithoutMiddleware, DatabaseTransactions;
 
     /**
      * A home (/) exibe um formulário de login?
@@ -37,8 +37,9 @@ class UsuarioTest extends TestCase
         $response = $this->post('/autenticar', $dadosUsuario);
 
         # redirecionar para a home (/) em caso de erro
-        $response->assertRedirectedTo('/');
-        $response->followRedirects();
+        $response->assertRedirectedTo('/')
+            ->followRedirects()
+            ->assertSessionHas('Erro', "Informe telefone e senha!");
         # agora estou na home (/)
         $this->see('Login')
             ->dontSee("Bem-vindo");
@@ -63,7 +64,8 @@ class UsuarioTest extends TestCase
 
         # redirecionar para a home (/) em caso de erro
         $response->assertRedirectedTo('/')
-            ->followRedirects();
+            ->followRedirects()
+            ->assertSessionHas('Erro', "Informe telefone e senha!");
         # agora estou na home (/)
         $this->see('Login')
             ->dontSee("Bem-vindo");
