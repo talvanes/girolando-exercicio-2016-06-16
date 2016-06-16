@@ -119,7 +119,7 @@ class UsuarioTest extends TestCase
         # senha é outra
         $dadosUsuario = [
             'telefoneUsuario' => $usuario->telefoneUsuario,
-            'password' => str_random(10),
+            'password' => bcrypt(str_random(10)),
         ];
 
         # autenticacao de usuário
@@ -138,17 +138,68 @@ class UsuarioTest extends TestCase
     public function testShouldFailOnInactiveUser()
     {
         # criar usuário já inativo
+        $usuario = \Segundo\Models\Pessoa::create([
+            'nomeUsuario' => str_random(25),
+            'emailUsuario' => str_random(13),
+            'telefoneUsuario' => str_random(10),
+            'remember_token' => str_random(14),
+            'password' => bcrypt(str_random(14)),
+            'statusUsuario' => 0,
+        ]);
+        # as credenciais estão corretas
+        $dadosUsuario = [
+            'telefoneUsuario' => $usuario->telefoneUsuario,
+            'password' => $usuario->password,
+        ];
+
+        # autenticação do usuário
+        $response = $this->post('/autenticar', $dadosUsuario);
+
+        # TODO: garantir que usuário inativo também não logue
+
     }
 
     /**
      * TODO:
-     * Usuário válido devidamente registrado com senha válida deve logar no sistena.
+     * Usuário válido, ativo que digitou a senha correta deve logar no sistena.
      *
      * Neste caso, espera-se um acerto.
      */
     public function testShouldSucceedOnLogin()
     {
+        # garantir que o usuário seja criado
+        #   (afinal, não se pode confiar no banco de dados)
+        $usuario = \Segundo\Models\Pessoa::create([
+            'nomeUsuario' => str_random(20),
+            'emailUsuario' => str_random(10),
+            'telefoneUsuario' => str_random(9),
+            'remember_token' => str_random(15),
+            'password' => bcrypt(str_random(15)),
+            'statusUsuario' => 1,
+        ]);
+        # as credenciais estão corretas
+        $dadosUsuario = [
+            'telefoneUsuario' => $usuario->telefoneUsuario,
+            'password' => $usuario->password,
+        ];
 
+        # autenticação do usuário
+        $response = $this->post('/atualizar', $dadosUsuario);
+
+        # TODO: garantir que o usuário ativo com as credenciais corretas logue no sistema
+
+    }
+
+
+    /**
+     * TODO:
+     * Usuário registrado vai sair da sessão.
+     * 
+     * Neste caso, espera-se um acerto.
+     */
+    public function testShouldSuccedOnLogout()
+    {
+        
     }
 
 
