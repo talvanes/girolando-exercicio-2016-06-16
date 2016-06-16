@@ -16,7 +16,11 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+        // Recuperando o usuário logado
         $usuario = session('Usuario');
+
+        // Sem credenciais de usuário, não há como acessar a área restrita
+        if (!$usuario) return redirect()->route('index');
 
         // Exibir a dashboard (área restrita)
         return view('usuario.dashboard')

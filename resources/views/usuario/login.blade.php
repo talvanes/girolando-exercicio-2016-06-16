@@ -5,7 +5,7 @@
     <title>Home</title>
 </head>
 <body>
-    {{--TODO: Página de login--}}
+    {{--Página de login--}}
     <h1>Login</h1>
 
     {{--Mensagens de erro ou sucesso--}}
