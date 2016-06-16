@@ -1,4 +1,6 @@
-<?php return [
+<?php 
+
+return [
     'autenticar' => [
         'erro' => [
             'informeDados' => "Informe telefone e senha!",
