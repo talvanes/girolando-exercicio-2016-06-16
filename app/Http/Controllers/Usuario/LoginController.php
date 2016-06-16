@@ -9,5 +9,11 @@ use Segundo\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
-    //
+    /**
+     * Exibe um formulário de login, com os campos Telefone e Senha
+     */
+    public function index()
+    {
+        
+    }
 }

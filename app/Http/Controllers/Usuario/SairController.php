@@ -9,5 +9,13 @@ use Segundo\Http\Controllers\Controller;
 
 class SairController extends Controller
 {
-    //
+    /**
+     * Este método vai "desautenticar" o usuário da sessão, redirecionando-o ao formulário de login
+     *
+     * @param Request $request Dados da requisição, o que inclui sessão
+     */
+    public function destroy(Request $request)
+    {
+
+    }
 }
