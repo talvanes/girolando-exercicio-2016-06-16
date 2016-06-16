@@ -17,7 +17,7 @@ class AutenticarController extends Controller
      *
      * @param Request $request Dados para autenticação
      */
-    public function store(Request $request)
+    public function store(Requests\Usuario\UsuarioRequest $request)
     {
         # credenciais de usuário
         $credenciais = $request->all();

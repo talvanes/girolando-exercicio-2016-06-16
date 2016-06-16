@@ -9,6 +9,13 @@
     <h1>Login</h1>
 
     {{--Mensagens de erro ou sucesso--}}
+    @if(count($errors))
+    <ul>
+        @foreach($errors->all() as $error)
+            <span style="display: block;"><span style="color: red;">Erro:</span> {{ $error }}</span> 
+        @endforeach
+    </ul>
+    @endif
     <p>
         @if(Session::has('Erro'))
             <span style="color: red;">Erro:</span> {{ Session::get('Erro') }}
