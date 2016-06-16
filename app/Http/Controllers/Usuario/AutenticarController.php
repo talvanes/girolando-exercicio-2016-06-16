@@ -23,9 +23,9 @@ class AutenticarController extends Controller
         
         # se não foi preeenchido o login (telefoneUsuario) nem a senha (password),
         #   redirecionar à home (/)!
-        if ( !isset($credenciaisUsuario['telefoneUsuario']) || !isset($credenciaisUsuario['password']) ){
-            return redirect()->route('index');
-            //return back();
+        if ( empty($credenciaisUsuario['telefoneUsuario']) || empty($credenciaisUsuario['password']) ){
+            return redirect()->route('index')
+                ->with('Erro', trans('usuario.autenticar.erro.informeDados'));
         }
         
         # se usuário não existir no banco de dados,
@@ -33,24 +33,20 @@ class AutenticarController extends Controller
         $usuario = Pessoa::where('telefoneUsuario', '=', $credenciaisUsuario['telefoneUsuario'])->first();
         if ( !$usuario ) {
             return redirect()->route('index')
-                ->with('Erro', "Este usuário não existe!");
-            //Session::flash('Erro', "Este usuário não existe!");
-            //return back();
+                ->with('Erro', trans('usuario.autenticar.erro.usuarioNaoExiste'));
         }
         # conferir a senha: se for diferente do cadastro,
         #   redirecionar à home (/) com erro na session
         if ( $credenciaisUsuario['password'] != $usuario->password ) {
             return redirect()->route('index')
-                ->with('Erro', "A senha não confere!");
-            //Session::flash('Erro', "A senha não confere!");
-            //return back();
+                ->with('Erro', trans('usuario.autenticar.erro.senhaNaoConfere'));
         }
 
         # barrar também a autenticação de usuário inativo no sistema
         # o usuário está inativo no sistema? redirecionamento na home (/) com erro na session
         if ( !$usuario->statusUsuario ) {
             return redirect()->route('index')
-                ->with('Erro', "Usuário inativo não pode se autenticar!");
+                ->with('Erro', trans('usuario.autenticar.erro.usuarioInativo'));
         }
 
 

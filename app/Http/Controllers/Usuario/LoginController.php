@@ -14,6 +14,8 @@ class LoginController extends Controller
      */
     public function index()
     {
-        return "Login";
+        // TODO: substituir por uma view
+        #return "Login";
+        return view('usuario.login');
     }
 }

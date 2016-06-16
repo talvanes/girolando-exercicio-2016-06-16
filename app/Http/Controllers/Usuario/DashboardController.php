@@ -18,6 +18,9 @@ class DashboardController extends Controller
     {
         $usuario = session('Usuario');
 
-        return "Bem-vindo {$usuario->nomeUsuario}";
+        // Substituir por view
+        #return "Bem-vindo {$usuario->nomeUsuario}";
+        return view('usuario.dashboard')
+            ->with('Usuario', $usuario);
     }
 }

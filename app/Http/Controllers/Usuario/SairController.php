@@ -21,7 +21,7 @@ class SairController extends Controller
         if (session()->has('Usuario')) {
             # se sim, destruir a sessão ativa e redirecionar para a home (/), com sucesso
             session()->forget('Usuario');
-            return redirect()->route('index')->with('Sucesso', "Usuário saiu da sessão com sucesso!");
+            return redirect()->route('index')->with('Sucesso', trans('usuario.autenticar.sucesso.sairSessao'));
         }
 
     }
