@@ -12,13 +12,13 @@
 */
 
 // Formulário de login
-Route::resource('/', "", ['only' => 'index']);
+Route::resource('/', 'Usuario\LoginController', ['only' => 'index']);
 
 // Aqui serão recebidos os dados para autenticação
-Route::resource('autenticar', "", ['only' => 'store']);
+Route::resource('/autenticar', 'Usuario\AutenticarController', ['only' => 'store']);
 
 // Esta rota vai exibir a dashboard
-Route::resource('dashboard', "", ['only' => 'index']);
+Route::resource('/dashboard', 'Usuario\DashboardController', ['only' => 'index']);
 
 // Esta rota vai "desautenticar" o usuário, redirecionando-o para o formulário de login
-Route::resource('sair', "", ['only' => 'destroy']);
+Route::resource('/sair', 'Usuario\SairController', ['only' => 'index']); # index ou destroy

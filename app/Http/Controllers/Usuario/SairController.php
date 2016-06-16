@@ -14,7 +14,7 @@ class SairController extends Controller
      *
      * @param Request $request Dados da requisição, o que inclui sessão
      */
-    public function destroy(Request $request)
+    public function index(Request $request)
     {
 
     }
